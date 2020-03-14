@@ -2,6 +2,7 @@ import json
 import asyncio
 import logging
 import argparse
+import yahoo_fin.options
 import yahoo_fin.stock_info
 
 from datetime import datetime, timedelta
@@ -13,11 +14,13 @@ class VolStocksFilter:
         self.log = log
         self.end_date = datetime.now()
         self.stat_date = self.end_date - timedelta(days=config["lookback_duration_days"])
+        self.option_expiration_date = config["option_expiration_date"]
         self.beta_threshold = config["beta_threshold"]
         self.exchanges = config["exchanges"]
 
     async def run(self) -> None:
         data = await self.get_price_data(self.get_volatile_tickers(self.get_tickers()))
+        print(self.get_options_chain(data))
         print(self.compute_stats(data))
 
     def get_tickers(self) -> List[str]:
@@ -60,6 +63,16 @@ class VolStocksFilter:
             tasks.append(task)
         await asyncio.gather(*tasks)
         return price_data
+
+    def get_options_chain(self, price_data: Dict[str, Any]) -> Dict[str, Any]:
+        option_chains: Dict[str, Any] = {}
+        for ticker in price_data.keys():
+            try:
+                option_chains[ticker] = yahoo_fin.options.get_options_chain(ticker, self.option_expiration_date)
+            except Exception as error:
+                self.log.error(error)
+                continue
+        return option_chains
 
     def compute_stats(self, price_data: Dict[str, Any]) -> Dict[str, Any]:
         price_stats: Dict[str, Any] = {}
