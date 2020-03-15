@@ -7,11 +7,9 @@ System `python3` is located at `/usr/local/bin/python3`
 Run `make venv` to create a `python3` virtual environment and install all project
 dependencies
 
-#### Invoking the script:
+#### Running the app:
 
-Invoke the script with `make run`
-
-Errors will be logged to `./vol_stocks_filter.log`
+Run `make ui` from the `vsf` base directory
 
 #### Updating the source code:
 
