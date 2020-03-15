@@ -1,0 +1,4 @@
+{
+  "exchanges": ["dow", "sp500", "nasdaq", "other"],
+  "stats": ["mean", "median", "std_dev", "variance"]
+}

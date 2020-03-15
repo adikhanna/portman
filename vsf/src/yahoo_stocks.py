@@ -22,7 +22,8 @@ class YahooStocks:
         tickers: List[str] = []
         for exchange in exchanges:
             try:
-                exchange_tickers = eval("yahoo_fin.stock_info.tickers_" + exchange + "()")
+                exchange_tickers = eval(
+                    "yahoo_fin.stock_info.tickers_" + exchange + "()")
                 tickers += exchange_tickers
             except Exception as error:
                 self.log.error(str(error) + exchange)
@@ -45,23 +46,29 @@ class YahooStocks:
         return vol_tickers
 
     async def _get_data(self, ticker: str,
-                              ticker_data: Dict[str, pd.DataFrame],
-                              start_date: datetime,
-                              end_date: datetime) -> None:
+                        ticker_data: Dict[str, pd.DataFrame],
+                        start_date: datetime,
+                        end_date: datetime) -> None:
         try:
             ticker_data[ticker] = yahoo_fin.stock_info.get_data(ticker,
-                                          start_date=start_date.strftime("%m/%d/%Y"),
-                                          end_date=end_date.strftime("%m/%d/%Y"))
+                                                                start_date=start_date.strftime(
+                                                                    "%m/%d/%Y"),
+                                                                end_date=end_date.strftime("%m/%d/%Y"))
         except Exception as error:
             self.log.error(str(error) + ticker)
 
     async def get_ticker_data(self, tickers: List[str],
-                                    start_date: datetime,
-                                    end_date: datetime) -> Dict[str, pd.DataFrame]:
+                              start_date: datetime,
+                              end_date: datetime) -> Dict[str, pd.DataFrame]:
         tasks: List[asyncio.Future] = []
         ticker_data: Dict[str, pd.DataFrame] = {}
         for ticker in tickers:
-            task = asyncio.ensure_future(self._get_data(ticker, ticker_data, start_date, end_date))
+            task = asyncio.ensure_future(
+                self._get_data(
+                    ticker,
+                    ticker_data,
+                    start_date,
+                    end_date))
             tasks.append(task)
         await asyncio.gather(*tasks)
         return ticker_data
@@ -122,7 +129,8 @@ class YahooStocks:
 
     async def run(self) -> None:
         end_date = datetime.now()
-        start_date = end_date - timedelta(days=self.config["lookback_duration_days"])
+        start_date = end_date - \
+            timedelta(days=self.config["lookback_duration_days"])
         vol_tickers = self.get_volatile_tickers(self.get_tickers(self.config["exchanges"]),
                                                 self.config["beta_threshold"])
         ticker_data = await self.get_ticker_data(vol_tickers, start_date, end_date)

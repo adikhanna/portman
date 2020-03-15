@@ -18,7 +18,7 @@ run_options: venv typecheck
 	venv/bin/python ./src/yahoo_options.py -config ./conf/yahoo_options.json
 
 ui: venv typecheck
-	venv/bin/python ./src/ui.py
+	venv/bin/python ./src/main.py -config ./conf/main.json
 
 .PHONY: clean
 clean:

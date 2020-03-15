@@ -22,7 +22,8 @@ class YahooOptions:
         expiration_dates: List[str] = []
         for ticker in tickers:
             try:
-                expiration_dates += yahoo_fin.options.get_expiration_dates(ticker)
+                expiration_dates += yahoo_fin.options.get_expiration_dates(
+                    ticker)
             except Exception as error:
                 self.log.error(str(error) + ticker)
                 continue
@@ -44,15 +45,15 @@ class YahooOptions:
         return calls
 
     def get_puts(self,
-                  tickers: List[str],
-                  option_expiration_date: datetime = None) -> Dict[str, pd.DataFrame]:
+                 tickers: List[str],
+                 option_expiration_date: datetime = None) -> Dict[str, pd.DataFrame]:
         expiry = option_expiration_date.strftime("%m/%d/%Y") \
             if option_expiration_date is not None else None
         puts: Dict[str, pd.DataFrame] = {}
         for ticker in tickers:
             try:
                 puts[ticker] = yahoo_fin.options.get_puts(ticker,
-                                                            expiry)
+                                                          expiry)
             except Exception as error:
                 self.log.error(str(error) + ticker)
                 continue
@@ -74,7 +75,8 @@ class YahooOptions:
         return option_chains
 
     def run(self):
-        tickers = list(YahooStocks(self.log, self.config).get_tickers(self.config["exchanges"])[-1])
+        tickers = list(YahooStocks(self.log, self.config).get_tickers(
+            self.config["exchanges"])[-1])
         print(self.get_expiration_dates(tickers))
         print(self.get_calls(tickers))
         print(self.get_puts(tickers))
