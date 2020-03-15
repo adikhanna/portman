@@ -1,0 +1,5 @@
+{
+  "beta_threshold": 1.1,
+  "lookback_duration_days": 365,
+  "exchanges": ["dow"]
+}

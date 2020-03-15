@@ -8,8 +8,17 @@ typecheck: venv
 format: venv
 	venv/bin/autopep8 --in-place --aggressive ./src/*.py
 
-run: venv typecheck
-	venv/bin/python ./src/vol_stocks_filter.py -config ./conf/vol_stocks_filter.json
+freeze: venv
+	venv/bin/pip freeze > ./requirements.txt
+
+run_stocks: venv typecheck
+	venv/bin/python ./src/yahoo_stocks.py -config ./conf/yahoo_stocks.json
+
+run_options: venv typecheck
+	venv/bin/python ./src/yahoo_options.py -config ./conf/yahoo_options.json
+
+ui: venv typecheck
+	venv/bin/python ./src/ui.py
 
 .PHONY: clean
 clean:

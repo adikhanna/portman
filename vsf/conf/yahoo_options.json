@@ -1,6 +1,4 @@
 {
-  "beta_threshold": 1.1,
-  "lookback_duration_days": 365,
   "option_expiration_date": "03/20/2020",
   "exchanges": ["dow"]
 }
