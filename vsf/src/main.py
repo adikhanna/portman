@@ -14,7 +14,7 @@ from yahoo_options import YahooOptions
 from csv_exporter import CsvExporter
 from stocks_feed import TopStocksFeed
 
-from typing import Dict, Any, List, Callable
+from typing import Dict, Any, List
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -36,7 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _initialize_window(self) -> None:
         self.setWindowTitle("Volatile Stocks Finder")
-        self.setGeometry(50, 50, 1300, 200)
+        self.setGeometry(50, 50, 300, 1500)
 
         self.search_layout = QtWidgets.QVBoxLayout()
         self.search_frame = QtWidgets.QWidget()
@@ -58,10 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(widget)
 
     def _initialize_feeds(self, layout) -> None:
-        layout.addWidget(QtWidgets.QLabel("Top 100 Gainers Today"))
-        layout.addWidget(TopStocksFeed("gainers", self.yahoo_stocks))
-        layout.addWidget(QtWidgets.QLabel("Top 100 Most Active Today"))
-        layout.addWidget(TopStocksFeed("most_active", self.yahoo_stocks))
+        layout.addWidget(TopStocksFeed(self.yahoo_stocks))
 
     def _initialize_buttons(self, layout) -> None:
         params_button = QtWidgets.QPushButton("Find Stocks")

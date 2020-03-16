@@ -1,5 +1,5 @@
 from PyQt5 import QtCore
-from typing import Callable, Any, Union
+from typing import Callable, Any
 
 
 class WorkerSignals(QtCore.QObject):
@@ -18,3 +18,14 @@ class Worker(QtCore.QRunnable):
     def run(self):
         result = self.fn(*self.args, **self.kwargs)
         self.signals.result.emit(result)
+
+
+class UpdateThread(QtCore.QThread):
+    updateData = QtCore.pyqtSignal(object)
+
+    def __init__(self, record):
+        QtCore.QTimer.__init__(self)
+        self.data = record
+
+    def run(self):
+        self.updateData.emit(self.data)
