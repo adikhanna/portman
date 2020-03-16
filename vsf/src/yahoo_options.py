@@ -4,7 +4,7 @@ import argparse
 import pandas as pd
 import yahoo_fin.options
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from yahoo_stocks import YahooStocks
 from typing import List, Dict, Any
 from logger import Logger
