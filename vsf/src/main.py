@@ -36,7 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _initialize_window(self) -> None:
         self.setWindowTitle("Volatile Stocks Finder")
-        self.setGeometry(50, 50, 300, 1500)
+        self.setGeometry(50, 50, 315, 1500)
 
         self.search_layout = QtWidgets.QVBoxLayout()
         self.search_frame = QtWidgets.QWidget()
@@ -80,7 +80,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _set_search_params_window(self) -> None:
         self.params_window.layout = QtWidgets.QVBoxLayout()
         self.params_window.setWindowTitle("Find Stocks")
-        self.params_window.setGeometry(50, 300, 600, 400)
+        self.params_window.setGeometry(550, 50, 600, 400)
 
         self.exchange_layout = QtWidgets.QHBoxLayout()
         self.rest_layout = QtWidgets.QHBoxLayout()
