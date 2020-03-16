@@ -38,32 +38,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("Volatile Stocks Finder")
         self.setGeometry(50, 50, 315, 1500)
 
-        self.search_layout = QtWidgets.QVBoxLayout()
-        self.search_frame = QtWidgets.QWidget()
-        self.search_frame.setLayout(self.search_layout)
-
         self.options_popup_layout = QtWidgets.QVBoxLayout()
         self.options_popup_frame = QtWidgets.QWidget()
         self.options_popup_frame.setLayout(self.options_popup_layout)
 
-        layout = QtWidgets.QVBoxLayout()
+        self.layout = QtWidgets.QVBoxLayout()
 
-        self._initialize_feeds(layout)
-        self._initialize_buttons(layout)
+        self._initialize_feeds()
+        self._initialize_buttons()
         self._initialize_children_windows()
 
         widget = QtWidgets.QWidget()
-        widget.setLayout(layout)
+        widget.setLayout(self.layout)
 
         self.setCentralWidget(widget)
 
     def _initialize_feeds(self, layout) -> None:
         layout.addWidget(TopStocksFeed(self.yahoo_stocks))
 
-    def _initialize_buttons(self, layout) -> None:
+    def _initialize_buttons(self) -> None:
         params_button = QtWidgets.QPushButton("Find Stocks")
         params_button.clicked.connect(self.show_search_params_window)
-        layout.addWidget(params_button)
+        self.layout.addWidget(params_button)
 
     def _initialize_children_windows(self) -> None:
         self.params_window = QtWidgets.QDialog()
@@ -78,6 +74,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.exchanges_to_search.remove(checkbox.text())
 
     def _set_search_params_window(self) -> None:
+        self.params_window = QtWidgets.QDialog()
         self.params_window.layout = QtWidgets.QVBoxLayout()
         self.params_window.setWindowTitle("Find Stocks")
         self.params_window.setGeometry(550, 50, 600, 400)
@@ -149,6 +146,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self._dispatch(self.find_stocks, self.display_search_results)
 
     def display_search_results(self) -> None:
+        search_layout = QtWidgets.QVBoxLayout()
+        search_frame = QtWidgets.QWidget()
+        search_frame.setLayout(search_layout)
+
         w = QtWidgets.QTableWidget(0, len(self.search_results.keys())+1)
         w.setHorizontalHeaderLabels(["Statistic"] + list(self.search_results.keys()))
 
@@ -165,28 +166,29 @@ class MainWindow(QtWidgets.QMainWindow):
                 it.setData(QtCore.Qt.DisplayRole, str(v))
                 w.setItem(j, i+1, it)
 
-        self.search_layout.addWidget(w)
-        self._add_buttons_to_results()
-        self.search_frame.show()
+        search_layout.addWidget(w)
+        self._add_buttons_to_results(search_layout)
+        self.layout.addWidget(search_frame)
+        search_frame.show()
 
-    def _add_buttons_to_results(self) -> None:
+    def _add_buttons_to_results(self, search_layout) -> None:
         yahoo_stocks_csv = CsvExporter(self.search_results, self.yahoo_stocks)
 
         this_button = QtWidgets.QPushButton("Export this to csv...")
         this_button.clicked.connect(partial(self._dispatch,
                                             yahoo_stocks_csv.export_stats_to_csv,
                                             self.log))
-        self.search_layout.addWidget(this_button)
+        search_layout.addWidget(this_button)
 
         stats_button = QtWidgets.QPushButton("Export stats to csv...")
         stats_button.clicked.connect(partial(self._dispatch,
                                              yahoo_stocks_csv.export_ticker_stats_to_csv,
                                              self.log))
-        self.search_layout.addWidget(stats_button)
+        search_layout.addWidget(stats_button)
 
         ops_button = QtWidgets.QPushButton("Get options data for these symbols...")
         ops_button.clicked.connect(self.show_options_data)
-        self.search_layout.addWidget(ops_button)
+        search_layout.addWidget(ops_button)
 
     def show_options_data(self) -> None:
         yahoo_options_csv = CsvExporter(self.search_results, self.yahoo_options)
