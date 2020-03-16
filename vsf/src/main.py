@@ -53,8 +53,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(widget)
 
-    def _initialize_feeds(self, layout) -> None:
-        layout.addWidget(TopStocksFeed(self.yahoo_stocks))
+    def _initialize_feeds(self) -> None:
+        self.layout.addWidget(TopStocksFeed(self.yahoo_stocks))
 
     def _initialize_buttons(self) -> None:
         params_button = QtWidgets.QPushButton("Find Stocks")
