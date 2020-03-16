@@ -11,9 +11,11 @@ from typing import Union, List, Any, Dict
 class CsvExporter:
     def __init__(self,
                  data: Dict[str, Any],
-                 yahoo_adapter):
+                 yahoo_adapter,
+                 expiration_date: datetime.datetime = None):
         self.data = data
         self.yahoo_adapter = yahoo_adapter
+        self.expiration_date = expiration_date
 
     def export_stats_to_csv(self) -> Dict[str, bool]:
         if isinstance(self.yahoo_adapter, YahooStocks):
@@ -36,11 +38,10 @@ class CsvExporter:
             return {"success": True}
         return {"success": False}
 
-    def export_options_chain_to_csv(
-            self, expiration_date: datetime.datetime = None) -> Dict[str, bool]:
+    def export_options_chain_to_csv(self) -> Dict[str, bool]:
         if isinstance(self.yahoo_adapter, YahooOptions):
             options_chain = self.yahoo_adapter.get_options_chain(list(self.data.keys()),
-                                                                 expiration_date)
+                                                                 self.expiration_date)
             with open("option_chain.csv", "w", newline="") as csv_file:
                 writer = csv.writer(csv_file)
                 for key, value in options_chain.items():

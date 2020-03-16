@@ -139,6 +139,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_error_window("Please enter a valid beta threshold")
         elif not self._validate_lookback_period():
             self._show_error_window("Please enter a valid lookback period")
+        elif len(self.exchanges_to_search) == 0:
+            self._show_error_window("Please select at least one exchange to search")
         else:
             self.beta_threshold = float(self.params_window.beta_threshold.text())
             self.lookback_period = int(self.params_window.lookback_period.text())
@@ -146,32 +148,35 @@ class MainWindow(QtWidgets.QMainWindow):
             self._dispatch(self.find_stocks, self.display_search_results)
 
     def display_search_results(self) -> None:
-        search_layout = QtWidgets.QVBoxLayout()
-        search_frame = QtWidgets.QWidget()
-        search_frame.setLayout(search_layout)
+        if len(self.search_results) > 0:
+            search_layout = QtWidgets.QVBoxLayout()
+            search_frame = QtWidgets.QWidget()
+            search_frame.setLayout(search_layout)
 
-        w = QtWidgets.QTableWidget(0, len(self.search_results.keys())+1)
-        w.setHorizontalHeaderLabels(["Statistic"] + list(self.search_results.keys()))
+            w = QtWidgets.QTableWidget(0, len(self.search_results.keys())+1)
+            w.setHorizontalHeaderLabels(["Statistic"] + list(self.search_results.keys()))
 
-        for i, k in enumerate(self.stats_to_compute):
-            w.insertRow(w.rowCount())
-            it = QtWidgets.QTableWidgetItem()
-            it.setData(QtCore.Qt.DisplayRole, str(k))
-            w.setItem(i, 0, it)
-
-        for i, (key, value) in enumerate(self.search_results.items()):
-            rows = [value[k] for k in value.keys()]
-            for j, v in enumerate(rows):
+            for i, k in enumerate(self.stats_to_compute):
+                w.insertRow(w.rowCount())
                 it = QtWidgets.QTableWidgetItem()
-                it.setData(QtCore.Qt.DisplayRole, str(v))
-                w.setItem(j, i+1, it)
+                it.setData(QtCore.Qt.DisplayRole, str(k))
+                w.setItem(i, 0, it)
 
-        search_layout.addWidget(w)
-        self._add_buttons_to_results(search_layout)
-        self.layout.addWidget(search_frame)
-        search_frame.show()
+            for i, (key, value) in enumerate(self.search_results.items()):
+                rows = [value[k] for k in value.keys()]
+                for j, v in enumerate(rows):
+                    it = QtWidgets.QTableWidgetItem()
+                    it.setData(QtCore.Qt.DisplayRole, str(v))
+                    w.setItem(j, i+1, it)
 
-    def _add_buttons_to_results(self, search_layout) -> None:
+            search_layout.addWidget(w)
+            self._add_buttons_to_results(search_layout, search_frame)
+            self.layout.addWidget(search_frame)
+            search_frame.show()
+        else:
+            self._show_error_window("No stocks found")
+
+    def _add_buttons_to_results(self, search_layout, search_frame) -> None:
         yahoo_stocks_csv = CsvExporter(self.search_results, self.yahoo_stocks)
 
         this_button = QtWidgets.QPushButton("Export this to csv...")
@@ -190,15 +195,19 @@ class MainWindow(QtWidgets.QMainWindow):
         ops_button.clicked.connect(self.show_options_data)
         search_layout.addWidget(ops_button)
 
+        exit_button = QtWidgets.QPushButton("Close search")
+        exit_button.clicked.connect(search_frame.close)
+        search_layout.addWidget(exit_button)
+
     def show_options_data(self) -> None:
-        yahoo_options_csv = CsvExporter(self.search_results, self.yahoo_options)
         combo_box = QtWidgets.QComboBox()
         combo_box.addItems(self.yahoo_options.get_expiration_dates(list(self.search_results.keys())))
         self.options_popup_layout.addWidget(combo_box)
-        ops_button = QtWidgets.QPushButton("Export options data to csv...")
         expiration_date = datetime.datetime.strptime(str(combo_box.currentText()), "%B %d, %Y")
+        yahoo_options_csv = CsvExporter(self.search_results, self.yahoo_options, expiration_date)
+        ops_button = QtWidgets.QPushButton("Export options data to csv...")
         ops_button.clicked.connect(partial(self._dispatch,
-                                           yahoo_options_csv.export_ticker_stats_to_csv,
+                                           yahoo_options_csv.export_options_chain_to_csv,
                                            self.log))
         self.options_popup_layout.addWidget(ops_button)
         self.options_popup_frame.show()
