@@ -36,7 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _initialize_window(self) -> None:
         self.setWindowTitle("Volatile Stocks Finder")
-        self.setGeometry(50, 50, 1300, 200)
+        self.setGeometry(50, 50, 315, 1500)
 
         self.options_popup_layout = QtWidgets.QVBoxLayout()
         self.options_popup_frame = QtWidgets.QWidget()
@@ -53,11 +53,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(widget)
 
-    def _initialize_feeds(self) -> None:
-        self.layout.addWidget(QtWidgets.QLabel("Top 100 Gainers Today"))
-        self.layout.addWidget(TopStocksFeed("gainers", self.yahoo_stocks))
-        self.layout.addWidget(QtWidgets.QLabel("Top 100 Most Active Today"))
-        self.layout.addWidget(TopStocksFeed("most_active", self.yahoo_stocks))
+    def _initialize_feeds(self, layout) -> None:
+        layout.addWidget(TopStocksFeed(self.yahoo_stocks))
 
     def _initialize_buttons(self) -> None:
         params_button = QtWidgets.QPushButton("Find Stocks")
@@ -80,7 +77,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.params_window = QtWidgets.QDialog()
         self.params_window.layout = QtWidgets.QVBoxLayout()
         self.params_window.setWindowTitle("Find Stocks")
-        self.params_window.setGeometry(50, 300, 600, 400)
+        self.params_window.setGeometry(550, 50, 600, 400)
 
         self.exchange_layout = QtWidgets.QHBoxLayout()
         self.rest_layout = QtWidgets.QHBoxLayout()
