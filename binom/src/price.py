@@ -31,7 +31,6 @@ class stock_vol:
         sigma = st.iloc[-1]
         return sigma
 
-
 def binomialCoeff(n, k):
     res = 1
     if (k > n - k):
@@ -56,6 +55,7 @@ def binomial(n, S, r, v, t):
         for j in range(1, i + 1):
             prob = binomialCoeff(i, j) * (p ** (i - j)) * ((1 - p) ** j)
             stockvalue[i, j] = (stockvalue[i - 1, j - 1][0] * d, prob)
+            
     print(tabulate(pd.DataFrame(stockvalue), headers='keys'))
     return stockvalue
 
