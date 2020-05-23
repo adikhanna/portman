@@ -11,7 +11,7 @@ format: venv
 freeze: venv
 	venv/bin/pip freeze > ./requirements.txt
 
-run: venv typecheck
+run: venv
 	venv/bin/python ./src/price.py
 
 .PHONY: clean

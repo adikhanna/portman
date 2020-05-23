@@ -1,7 +1,6 @@
 {
-  "number_of_binomial_steps": 10,
-  "initial_asset_price": 100,
-  "risk_free_interest_rate": 0.06,
-  "option_strike_price": 105,
+  "number_of_binomial_steps": 3,
+  "initial_asset_price": 318,
+  "risk_free_interest_rate": 0.12,
   "volatility_factor": 0.4
 }
