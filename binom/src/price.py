@@ -2,8 +2,9 @@ import arch
 import numpy as np
 import pandas as pd
 import yfinance as yf
-from tabulate import tabulate
 import pandas_datareader.data as pdr
+
+from tabulate import tabulate
 
 yf.pdr_override()
 
@@ -24,6 +25,11 @@ class stock_vol:
           var = forecast.variance.iloc[-1]
           sigma = float(np.sqrt(var))
           return sigma
+
+    def mean_sigma(self):
+        st = self.stock_data["log"].dropna().ewm(span=252).std()
+        sigma = st.iloc[-1]
+        return sigma
 
 
 def binomialCoeff(n, k):
@@ -50,17 +56,16 @@ def binomial(n, S, r, v, t):
         for j in range(1, i + 1):
             prob = binomialCoeff(i, j) * (p ** (i - j)) * ((1 - p) ** j)
             stockvalue[i, j] = (stockvalue[i - 1, j - 1][0] * d, prob)
-
     print(tabulate(pd.DataFrame(stockvalue), headers='keys'))
     return stockvalue
 
 
-sv = stock_vol("AAPL", "2019-05-23",  "2020-05-23")
+sv = stock_vol("AAPL", "2019-05-22",  "2020-05-22")
 
 n = 3
 S = 318
 r = 0.12
-v = sv.garch_sigma()
+v = sv.mean_sigma()*np.sqrt(12)
 t = 1.
 
 binomial(n, S, r, v, t)
