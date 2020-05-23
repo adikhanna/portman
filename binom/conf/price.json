@@ -1,0 +1,6 @@
+{
+  "number_of_binomial_steps": 3,
+  "initial_asset_price": 318,
+  "risk_free_interest_rate": 0.12,
+  "volatility_factor": 0.4
+}
