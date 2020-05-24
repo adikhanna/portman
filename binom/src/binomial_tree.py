@@ -1,7 +1,12 @@
 import arch
 import json
 import imgkit
+import warnings
 import argparse
+
+warnings.simplefilter(action="ignore",
+                      category=FutureWarning)
+
 import numpy as np
 import pandas as pd
 import yfinance as yf
@@ -65,6 +70,7 @@ class BinomialTree:
             return self.input_vol
 
     def export(self) -> None:
+        print(f"Using volatility of: {self.vol}")
         at = self.time_period/self.steps
         up = np.exp(self.vol*np.sqrt(at))
         down = 1./up
