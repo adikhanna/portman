@@ -79,7 +79,7 @@ class BinomialTree:
         stock_tree = np.zeros((self.steps + 1,
                                self.steps + 1),
                                dtype=tuple)
-        stock_tree[0, 0] = (self.init_stock_price, 1)
+        stock_tree[0, 0] = (self.init_stock_price, 100)
 
         for i in range(1, self.steps + 1):
             implicit_prob = round(self._get_coefficient(i, 0) * (rn_prob ** i) * 100, self.decis)
