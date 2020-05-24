@@ -1,4 +1,7 @@
-venv:
+dep:
+	brew cask install wkhtmltopdf
+
+venv: dep
 	/usr/local/bin/python3 -m venv venv
 	venv/bin/pip3 install -r requirements.txt
 

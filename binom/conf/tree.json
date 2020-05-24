@@ -1,9 +1,10 @@
 {
-  "number_of_binomial_steps": 3,
+  "number_of_binomial_steps": 12,
   "initial_stock_price": 816.88,
   "risk_free_rate": 0.12,
   "ticker": "TSLA",
   "time_period_in_years": 0.5,
   "auto_volatility": true,
-  "volatility_estimate": 0.4
+  "volatility_estimate": 0.4,
+  "round_up_decimals": 3
 }

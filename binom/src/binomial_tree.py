@@ -1,12 +1,12 @@
 import arch
 import json
+import imgkit
 import argparse
 import numpy as np
 import pandas as pd
 import yfinance as yf
 import pandas_datareader.data as pdr
 
-from tabulate import tabulate
 from datetime import datetime, timedelta
 
 yf.pdr_override()
@@ -46,6 +46,7 @@ class BinomialTree:
         self.auto_vol = config["auto_volatility"]
         self.input_vol = config["volatility_estimate"]
         self.ticker = config["ticker"]
+        self.decis = config["round_up_decimals"]
         self.vol = self._get_vol()
 
     @staticmethod
@@ -63,7 +64,7 @@ class BinomialTree:
         else:
             return self.input_vol
 
-    def print(self) -> None:
+    def export(self) -> None:
         at = self.time_period/self.steps
         up = np.exp(self.vol*np.sqrt(at))
         down = 1./up
@@ -75,13 +76,15 @@ class BinomialTree:
         stock_tree[0, 0] = (self.init_stock_price, 1)
 
         for i in range(1, self.steps + 1):
-            implicit_prob = self._get_coefficient(i, 0) * (rn_prob ** i)
-            stock_tree[i, 0] = (stock_tree[i - 1, 0][0] * up, implicit_prob)
+            implicit_prob = round(self._get_coefficient(i, 0) * (rn_prob ** i) * 100, self.decis)
+            stock_tree[i, 0] = (round(stock_tree[i - 1, 0][0] * up, self.decis), implicit_prob)
             for j in range(1, i + 1):
-                implicit_prob = self._get_coefficient(i, j) * (rn_prob ** (i - j)) * ((1 - rn_prob) ** j)
-                stock_tree[i, j] = (stock_tree[i - 1, j - 1][0] * down, implicit_prob)
+                implicit_prob = round(self._get_coefficient(i, j) * (rn_prob ** (i - j)) * ((1 - rn_prob) ** j) * 100,
+                                      self.decis)
+                stock_tree[i, j] = (round(stock_tree[i - 1, j - 1][0] * down, self.decis), implicit_prob)
 
-        print(tabulate(pd.DataFrame(stock_tree), headers="keys", tablefmt="psql"))
+        styled_table = pd.DataFrame(stock_tree).style.background_gradient().render()
+        imgkit.from_string(styled_table, f"{self.ticker}_stock_tree_{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.png")
 
 
 def parse_args() -> str:
@@ -101,7 +104,7 @@ def main():
         params = json.load(conf)
 
     binom_tree = BinomialTree(params)
-    binom_tree.print()
+    binom_tree.export()
 
 
 if __name__ == "__main__":
