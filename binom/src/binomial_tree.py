@@ -64,10 +64,7 @@ class BinomialTree:
         return coefficient
 
     def _get_vol(self) -> float:
-        if self.auto_vol:
-            return StockVol(self.ticker).get_mean_sigma()*np.sqrt(12)
-        else:
-            return self.input_vol
+        return StockVol(self.ticker).get_mean_sigma()*np.sqrt(12) if self.auto_vol else self.input_vol
 
     def export(self) -> None:
         print(f"Using volatility of: {self.vol}")
