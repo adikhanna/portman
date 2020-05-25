@@ -99,7 +99,7 @@ class BinomialTree:
 
 
 def parse_args() -> str:
-    parser = argparse.ArgumentParser(description="binomial_stock_stree")
+    parser = argparse.ArgumentParser(description="binomial_stock_tree")
     parser.add_argument("-config",
                         type=str,
                         required=True,
