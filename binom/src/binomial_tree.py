@@ -56,7 +56,7 @@ class BinomialTree:
         self.input_vol = config["volatility_estimate"]
         self.ticker = config["ticker"]
         self.decis = config["round_up_decimals"]
-        self.init_stock_price = self._get_mid_price()
+        self.current_stock_price = self._get_mid_price()
         self.vol = self._get_vol()
 
     @staticmethod
@@ -84,7 +84,7 @@ class BinomialTree:
         stock_tree = np.zeros((self.steps + 1,
                                self.steps + 1),
                                dtype=tuple)
-        stock_tree[0, 0] = (self.init_stock_price, 100)
+        stock_tree[0, 0] = (self.current_stock_price, 100)
 
         for i in range(1, self.steps + 1):
             implicit_prob = round(self._get_coefficient(i, 0) * (rn_prob ** i) * 100, self.decis)
@@ -94,7 +94,14 @@ class BinomialTree:
                                       self.decis)
                 stock_tree[i, j] = (round(stock_tree[i - 1, j - 1][0] * down, self.decis), implicit_prob)
 
-        styled_table = pd.DataFrame(stock_tree).style.background_gradient().render()
+        styles = [
+            dict(props=[
+                ("font-size", "20px"),
+                ("border-collapse", "separate"),
+                ("border-spacing", "50px 50px")]),
+            ]
+
+        styled_table = pd.DataFrame(stock_tree).style.set_table_styles(styles).render()
         imgkit.from_string(styled_table, f"{self.ticker}_stock_tree_{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.png")
 
 
