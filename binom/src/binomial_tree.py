@@ -17,11 +17,16 @@ from datetime import datetime, timedelta
 yf.pdr_override()
 
 
+ONE_YEAR_DAYS = 365
+ONE_YEAR_MONTHS = 12
+TRADING_YEAR_DAYS = 252
+
+
 class StockVol:
     def __init__(self, ticker: str):
         self.ticker = ticker
         self.end = datetime.now()
-        self.start = self.end - timedelta(days=365)
+        self.start = self.end - timedelta(days=ONE_YEAR_DAYS)
         self.stock_data = pd.DataFrame(pdr.get_data_yahoo(self.ticker,
                                                           start=self.start.strftime("%Y-%m-%d"),
                                                           end=self.end.strftime("%Y-%m-%d"))
@@ -39,7 +44,7 @@ class StockVol:
         return float(np.sqrt(forecast.variance.iloc[-1]))
 
     def get_mean_sigma(self) -> float:
-        return self.stock_data["log"].dropna().ewm(span=252).std().iloc[-1]
+        return self.stock_data["log"].dropna().ewm(span=TRADING_YEAR_DAYS).std().iloc[-1]
 
 
 class BinomialTree:
@@ -64,7 +69,7 @@ class BinomialTree:
         return coefficient
 
     def _get_vol(self) -> float:
-        return StockVol(self.ticker).get_mean_sigma()*np.sqrt(12) if self.auto_vol else self.input_vol
+        return StockVol(self.ticker).get_mean_sigma()*np.sqrt(ONE_YEAR_MONTHS) if self.auto_vol else self.input_vol
 
     def _get_mid_price(self) -> float:
         return round((yf.Ticker(self.ticker).info["bid"] + yf.Ticker(self.ticker).info["ask"])/2., self.decis)
