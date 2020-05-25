@@ -47,11 +47,11 @@ class BinomialTree:
         self.time_period = config["time_period_in_years"]
         self.steps = config["number_of_binomial_steps"]
         self.risk_free_rate = config["risk_free_rate"]
-        self.init_stock_price = config["initial_stock_price"]
         self.auto_vol = config["auto_volatility"]
         self.input_vol = config["volatility_estimate"]
         self.ticker = config["ticker"]
         self.decis = config["round_up_decimals"]
+        self.init_stock_price = self._get_mid_price()
         self.vol = self._get_vol()
 
     @staticmethod
@@ -66,8 +66,11 @@ class BinomialTree:
     def _get_vol(self) -> float:
         return StockVol(self.ticker).get_mean_sigma()*np.sqrt(12) if self.auto_vol else self.input_vol
 
+    def _get_mid_price(self) -> float:
+        return round((yf.Ticker(self.ticker).info["bid"] + yf.Ticker(self.ticker).info["ask"])/2., self.decis)
+
     def export(self) -> None:
-        print(f"Using volatility of: {self.vol}")
+        print(f"Using volatility value of: {self.vol}")
         at = self.time_period/self.steps
         up = np.exp(self.vol*np.sqrt(at))
         down = 1./up
@@ -95,7 +98,7 @@ def parse_args() -> str:
     parser.add_argument("-config",
                         type=str,
                         required=True,
-                        help="Config file")
+                        help="Config File")
     args = parser.parse_args()
     return args.config
 
