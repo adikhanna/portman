@@ -5,5 +5,7 @@
   "time_period_in_years": 0.5,
   "auto_volatility": true,
   "volatility_estimate": 0.4,
+  "auto_p": false,
+  "p_estimate": 0.4,
   "round_up_decimals": 2
 }

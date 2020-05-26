@@ -16,7 +16,6 @@ from datetime import datetime, timedelta
 
 yf.pdr_override()
 
-
 ONE_YEAR_DAYS = 365
 ONE_YEAR_MONTHS = 12
 TRADING_YEAR_DAYS = 252
@@ -54,6 +53,8 @@ class BinomialTree:
         self.risk_free_rate = config["risk_free_rate"]
         self.auto_vol = config["auto_volatility"]
         self.input_vol = config["volatility_estimate"]
+        self.auto_p = config["auto_p"]
+        self.input_p = config["p_estimate"]
         self.ticker = config["ticker"]
         self.decis = config["round_up_decimals"]
         self.current_stock_price = self._get_mid_price()
@@ -69,17 +70,22 @@ class BinomialTree:
         return coefficient
 
     def _get_vol(self) -> float:
-        return StockVol(self.ticker).get_mean_sigma()*np.sqrt(ONE_YEAR_MONTHS) if self.auto_vol else self.input_vol
+        return StockVol(self.ticker).get_mean_sigma() * np.sqrt(ONE_YEAR_MONTHS) if self.auto_vol else self.input_vol
+
+    def _get_p_value(self, at: float, up: float, down: float) -> float:
+        return (np.exp(self.risk_free_rate * at) - down)/(up - down) if self.auto_p else self.input_p
 
     def _get_mid_price(self) -> float:
         return round((yf.Ticker(self.ticker).info["bid"] + yf.Ticker(self.ticker).info["ask"])/2., self.decis)
 
     def export(self) -> None:
+        at = self.time_period / self.steps
+        up = np.exp(self.vol * np.sqrt(at))
+        down = 1. / up
+        prob = self._get_p_value(at, up, down)
+
         print(f"Using volatility value of: {self.vol}")
-        at = self.time_period/self.steps
-        up = np.exp(self.vol*np.sqrt(at))
-        down = 1./up
-        rn_prob = (np.exp(self.risk_free_rate*at)-down)/(up-down)
+        print(f"Using p value of: {prob}")
 
         stock_tree = np.zeros((self.steps + 1,
                                self.steps + 1),
@@ -87,10 +93,10 @@ class BinomialTree:
         stock_tree[0, 0] = (self.current_stock_price, 100)
 
         for i in range(1, self.steps + 1):
-            implicit_prob = round(self._get_coefficient(i, 0) * (rn_prob ** i) * 100, self.decis)
+            implicit_prob = round(self._get_coefficient(i, 0) * (prob ** i) * 100, self.decis)
             stock_tree[i, 0] = (round(stock_tree[i - 1, 0][0] * up, self.decis), implicit_prob)
             for j in range(1, i + 1):
-                implicit_prob = round(self._get_coefficient(i, j) * (rn_prob ** (i - j)) * ((1 - rn_prob) ** j) * 100,
+                implicit_prob = round(self._get_coefficient(i, j) * (prob ** (i - j)) * ((1 - prob) ** j) * 100,
                                       self.decis)
                 stock_tree[i, j] = (round(stock_tree[i - 1, j - 1][0] * down, self.decis), implicit_prob)
 
