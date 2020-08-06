@@ -17,7 +17,7 @@ run:
 build:
 	docker build . -t app
 
-run:
+docker:
 	docker run -t app -p 5000:5000 
 
 .PHONY: clean
