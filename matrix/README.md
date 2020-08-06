@@ -1,6 +1,6 @@
 #### Assumptions:
 
-System `python3` is located at `/usr/local/bin/python3` (Python 3.6+)
+System `python3` is located at `/usr/bin/python3` (Python 3.6+s)
 
 #### Building the project:
 
