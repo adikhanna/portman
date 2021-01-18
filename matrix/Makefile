@@ -8,9 +8,6 @@ typecheck:
 format:
 	venv/bin/autopep8 --in-place --aggressive *.py
 
-freeze:
-	venv/bin/pip freeze > ./requirements.txt
-
 run:
 	venv/bin/python ./app.py -config ./matrix.json
 
