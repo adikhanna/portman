@@ -6,7 +6,7 @@ typecheck: venv
 	venv/bin/mypy --config-file mypy.ini ./src/*.py
 
 format: venv
-	venv/bin/autopep8 --in-place --aggressive ./src/*.py
+	venv/bin/autopep8 --in-place ./src/*.py
 
 freeze: venv
 	venv/bin/pip freeze > ./requirements.txt
