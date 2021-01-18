@@ -5,12 +5,6 @@ install:
 typecheck:
 	venv/bin/mypy --config-file mypy.ini *.py
 
-format:
-	venv/bin/autopep8 --in-place *.py
-
-freeze:
-	venv/bin/pip freeze
-
 run:
 	venv/bin/python ./app.py -config ./matrix.json
 
