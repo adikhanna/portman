@@ -2,7 +2,7 @@ dep:
 	brew cask ls --versions wkhtmltopdf  > /dev/null || brew cask install wkhtmltopdf > /dev/null 2>&1
 
 venv: dep
-	[ ! -d "venv" ] || /usr/local/bin/python3 -m venv venv && venv/bin/pip3 install -r requirements.txt > /dev/null 2>&1
+	/usr/local/bin/python3 -m venv venv && venv/bin/pip3 install -r requirements.txt > /dev/null 2>&1
 
 typecheck: venv
 	venv/bin/mypy --config-file mypy.ini ./src/*.py
