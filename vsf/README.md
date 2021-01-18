@@ -7,10 +7,6 @@ System `python3` is located at `/usr/local/bin/python3`
 Run `make venv` to create a `python3` virtual environment and install all project
 dependencies
 
-#### Running the app:
-
-Run `make ui` from the `vsf` base directory
-
 #### Updating the source code:
 
 1. All source code lives within the `src/` directory
