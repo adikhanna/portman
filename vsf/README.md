@@ -9,7 +9,7 @@ dependencies
 
 #### Running the app:
 
-Run `make ui` from the `vsf` base directory
+Run `make ui` from the `vsf` base directory only
 
 #### Updating the source code:
 
