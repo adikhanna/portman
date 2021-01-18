@@ -9,7 +9,7 @@ format:
 	venv/bin/autopep8 --in-place *.py
 
 freeze:
-	venv/bin/pip freeze
+        venv/bin/pip freeze > ./requirements.txt
 
 run:
 	venv/bin/python ./app.py -config ./matrix.json
