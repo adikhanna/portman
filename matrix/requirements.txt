@@ -63,7 +63,7 @@ ua-parser==0.10.0
 urllib3==1.25.9
 w3lib==1.22.0
 waitress==1.4.4
-websockets==8.1
+websockets==9.1
 Werkzeug==1.0.1
 xarray==0.16.0
 yahooquery==2.2.5
