@@ -28,7 +28,7 @@ get-all-tickers==1.6
 idna==2.10
 itsdangerous==1.1.0
 Jinja2==2.11.2
-joblib==0.16.0
+joblib==1.2.0
 kiwisolver==1.2.0
 lxml==4.5.0
 lz4==3.1.0
